@@ -9,10 +9,10 @@ struct Registers
 {
     U8 A;
 
-    U8 Z : 1; // Zero flag
-    U8 N : 1; // Subtraction flag
-    U8 H : 1; // Half Carry flag
-    U8 C : 1; // Carry flag
+    U8 ZF : 1; // Zero flag
+    U8 NF : 1; // Subtraction flag
+    U8 HF : 1; // Half Carry flag
+    U8 CF : 1; // Carry flag
 
     union
     {
@@ -52,7 +52,8 @@ struct Registers
 class CPU
 {
 public:
-    static constexpr U8 INS_NOP = 0x00, INS_JP_NN = 0xC3, INS_CP_HL = 0xBE;
+    static constexpr U8 INS_NOP = 0x00, INS_JP_NN = 0xC3, INS_CP_HL = 0xBE, INS_XOR_A_A = 0xAF, INS_LD_HL_16 = 0x21,
+                        INS_LD_C_8 = 0x0E;
 
 public:
     CPU();

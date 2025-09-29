@@ -9,7 +9,7 @@ ROM::ROM(std::vector<char>&& romData) : m_RawData(std::move(romData))
     std::memcpy(&m_Header.EntryPoint, &m_RawData[0x100], 4);
 
     UniquePtr<char[]> tempTitle = MakeUnique<char[]>(16);
-    std::strcpy(tempTitle.get(), &m_RawData[0x134]);
+    strcpy_s(tempTitle.get(), 16, &m_RawData[0x134]);
     m_Header.GameTitle = std::string(tempTitle.get());
 
     if (m_RawData[0x143] == 0xC0)
