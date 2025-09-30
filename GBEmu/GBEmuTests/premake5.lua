@@ -69,3 +69,8 @@ filter("configurations:Release")
 defines("GBE_RELEASE")
 runtime("Release")
 optimize("on")
+
+filter("configurations:Tests")
+defines("GBE_TESTS")
+runtime("Debug")
+symbols("on")

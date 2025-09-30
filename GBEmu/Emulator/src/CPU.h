@@ -52,8 +52,15 @@ struct Registers
 class CPU
 {
 public:
-    static constexpr U8 INS_NOP = 0x00, INS_JP_NN = 0xC3, INS_CP_HL = 0xBE, INS_XOR_A_A = 0xAF, INS_LD_HL_16 = 0x21,
-                        INS_LD_C_8 = 0x0E;
+    enum : U8
+    {
+        INS_NOP = 0x00,
+        INS_LD_C_8 = 0x0E,
+        INS_LD_HL_16 = 0x21,
+        INS_XOR_A_A = 0xAF,
+        INS_CP_HL = 0xBE,
+        INS_JP_NN = 0xC3,
+    };
 
 public:
     CPU();
@@ -72,5 +79,13 @@ private:
 private:
     Registers m_Registers;
     U64 m_Cycles = 0;
+
+    FRIEND_TEST(CPUTests, Test_NOP);
+    FRIEND_TEST(CPUTests, Test_LD_C_8);
+    FRIEND_TEST(CPUTests, Test_LD_HL_16);
+    FRIEND_TEST(CPUTests, Test_XOR_A_A);
+    FRIEND_TEST(CPUTests, Test_0_CP_HL);
+    FRIEND_TEST(CPUTests, Test_1_CP_HL);
+    FRIEND_TEST(CPUTests, Test_JP_NN);
 };
 } // namespace Emulator

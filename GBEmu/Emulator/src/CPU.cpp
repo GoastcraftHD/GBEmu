@@ -33,7 +33,7 @@ void CPU::Step(const ROM& rom)
             }
         case INS_CP_HL:
             {
-                U8 data = m_Registers.A - FetchByte(rom, m_Registers.HL);
+                const U8 data = m_Registers.A - FetchByte(rom, m_Registers.HL);
                 m_Registers.ZF = data == 0;
                 m_Registers.NF = 1;
                 m_Registers.HF = GET_BIT(data, 3);
@@ -77,9 +77,12 @@ void CPU::Step(const ROM& rom)
 
 U8 CPU::FetchByte(const ROM& rom, U16 Address)
 {
-    U8 data = rom[Address];
+    const U8 data = rom[Address];
 
+#if defined(GBE_DEBUG)
     std::printf("0x%02X\n", data);
+#endif
+
     return data;
 }
 
@@ -88,7 +91,10 @@ U16 CPU::FetchWord(const ROM& rom, U16 Address)
     U16 data = rom[Address];
     data |= rom[Address + 1] << 8;
 
+#if defined(GBE_DEBUG)
     std::printf("0x%04X\n", data);
+#endif
+
     return data;
 }
 

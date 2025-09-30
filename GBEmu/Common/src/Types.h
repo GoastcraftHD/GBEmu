@@ -33,4 +33,4 @@ constexpr SharedPtr<T> MakeShared(Args&&... args)
 }
 
 #define BIT(x) 1 << x
-#define GET_BIT(data, bit) (data & BIT(bit)) >> bit
+#define GET_BIT(data, bit) (data & BIT(bit - 1)) >> (bit - 1)
