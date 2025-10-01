@@ -82,12 +82,6 @@ private:
     ROMHeader m_Header;
     std::vector<char> m_RawData;
 
-    FRIEND_TEST(CPUTests, Test_NOP);
-    FRIEND_TEST(CPUTests, Test_LD_C_8);
-    FRIEND_TEST(CPUTests, Test_LD_HL_16);
-    FRIEND_TEST(CPUTests, Test_XOR_A_A);
-    FRIEND_TEST(CPUTests, Test_0_CP_HL);
-    FRIEND_TEST(CPUTests, Test_1_CP_HL);
-    FRIEND_TEST(CPUTests, Test_JP_NN);
+    CPU_TESTS
 };
 } // namespace Emulator

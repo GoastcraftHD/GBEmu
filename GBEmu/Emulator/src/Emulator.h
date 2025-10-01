@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CPU.h"
+#include "RAM.h"
 #include "ROM.h"
 
 #include <filesystem>
@@ -18,6 +19,7 @@ private:
     bool m_ShouldStop = false;
 
     ROM m_ROM;
+    RAM m_RAM;
     CPU m_CPU;
 };
 } // namespace Emulator

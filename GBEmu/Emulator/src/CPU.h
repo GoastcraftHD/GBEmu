@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RAM.h"
 #include "ROM.h"
 #include "Types.h"
 
@@ -55,10 +56,13 @@ public:
     enum : U8
     {
         INS_NOP = 0x00,
+        INS_DEC_B = 0x05,
+        INS_LD_B_8 = 0x06,
         INS_LD_C_8 = 0x0E,
         INS_LD_HL_16 = 0x21,
+        INS_LD_HL_NEG_A = 0x32,
         INS_XOR_A_A = 0xAF,
-        INS_CP_HL = 0xBE,
+        INS_CP_A_HL = 0xBE,
         INS_JP_NN = 0xC3,
     };
 
@@ -70,22 +74,21 @@ public:
     /*
       Executes 1 instruction
      */
-    void Step(const ROM& rom);
+    void Step(const ROM& rom, RAM& ram);
 
 private:
-    U8 FetchByte(const ROM& rom, U16 Address);
-    U16 FetchWord(const ROM& rom, U16 Address);
+    U8 FetchROMByte(const ROM& rom, U16 address) const;
+    U16 FetchROMWord(const ROM& rom, U16 address) const;
+
+    U8 FetchRAMByte(const RAM& ram, U16 address) const;
+    U16 FetchRAMWord(const RAM& ram, U16 address) const;
+
+    void WriteRAMByte(RAM& ram, U16 address, U8 data);
 
 private:
     Registers m_Registers;
     U64 m_Cycles = 0;
 
-    FRIEND_TEST(CPUTests, Test_NOP);
-    FRIEND_TEST(CPUTests, Test_LD_C_8);
-    FRIEND_TEST(CPUTests, Test_LD_HL_16);
-    FRIEND_TEST(CPUTests, Test_XOR_A_A);
-    FRIEND_TEST(CPUTests, Test_0_CP_HL);
-    FRIEND_TEST(CPUTests, Test_1_CP_HL);
-    FRIEND_TEST(CPUTests, Test_JP_NN);
+    CPU_TESTS
 };
 } // namespace Emulator

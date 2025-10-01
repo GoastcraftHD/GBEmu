@@ -3,7 +3,6 @@
 #include "File.h"
 #include "Types.h"
 
-#include <print>
 #include <vector>
 
 namespace Emulator
@@ -19,7 +18,7 @@ void Emulator::Run()
 {
     while (!m_ShouldStop)
     {
-        m_CPU.Step(m_ROM);
+        m_CPU.Step(m_ROM, m_RAM);
     }
 }
 } // namespace Emulator
