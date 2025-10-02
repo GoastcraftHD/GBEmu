@@ -25,6 +25,20 @@ void CPU::Step(const ROM& rom, RAM& ram)
                 m_Cycles++;
                 break;
             }
+        case INS_JR_NZ_8:
+            {
+                I8 data = static_cast<I8>(FetchROMByte(rom, m_Registers.PC));
+                m_Registers.PC++;
+
+                if (!m_Registers.ZF)
+                {
+                    m_Registers.PC += data;
+                    m_Cycles++;
+                }
+
+                m_Cycles += 2;
+                break;
+            }
         case INS_DEC_B:
             {
                 m_Registers.B--;

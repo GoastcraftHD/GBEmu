@@ -56,6 +56,7 @@ public:
     enum : U8
     {
         INS_NOP = 0x00,
+        INS_JR_NZ_8 = 0x02,
         INS_DEC_B = 0x05,
         INS_LD_B_8 = 0x06,
         INS_LD_C_8 = 0x0E,

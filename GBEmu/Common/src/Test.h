@@ -9,6 +9,9 @@
 
 #define CPU_TESTS                            \
     FRIEND_TEST(CPUTests, Test_NOP);         \
+    FRIEND_TEST(CPUTests, Test_0_JR_NZ_8);   \
+    FRIEND_TEST(CPUTests, Test_1_JR_NZ_8);   \
+    FRIEND_TEST(CPUTests, Test_2_JR_NZ_8);   \
     FRIEND_TEST(CPUTests, Test_0_DEC_B);     \
     FRIEND_TEST(CPUTests, Test_1_DEC_B);     \
     FRIEND_TEST(CPUTests, Test_LD_B_8);      \

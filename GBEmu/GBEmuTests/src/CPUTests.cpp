@@ -48,6 +48,77 @@ TEST_F(CPUTests, Test_NOP)
     ASSERT_EQ(cpu.m_Registers.CF, 0);
 }
 
+TEST_F(CPUTests, Test_0_JR_NZ_8)
+{
+    rom.m_RawData[0x100] = cpu.INS_JR_NZ_8;
+    rom.m_RawData[0x101] = 0x20;
+
+    cpu.m_Registers.ZF = 1;
+
+    cpu.Step(rom, ram);
+
+    ASSERT_EQ(cpu.m_Cycles, 2);
+    ASSERT_EQ(cpu.m_Registers.PC, 0x102);
+    ASSERT_EQ(cpu.m_Registers.ZF, 1);
+
+    ASSERT_EQ(cpu.m_Registers.A, 0);
+    ASSERT_EQ(cpu.m_Registers.BC, 0);
+    ASSERT_EQ(cpu.m_Registers.DE, 0);
+    ASSERT_EQ(cpu.m_Registers.HL, 0);
+    ASSERT_EQ(cpu.m_Registers.SP, 0);
+    ASSERT_EQ(cpu.m_Registers.IR, 0);
+    ASSERT_EQ(cpu.m_Registers.IE, 0);
+    ASSERT_EQ(cpu.m_Registers.NF, 0);
+    ASSERT_EQ(cpu.m_Registers.HF, 0);
+    ASSERT_EQ(cpu.m_Registers.CF, 0);
+}
+
+TEST_F(CPUTests, Test_1_JR_NZ_8)
+{
+    rom.m_RawData[0x100] = cpu.INS_JR_NZ_8;
+    rom.m_RawData[0x101] = 0x20;
+
+    cpu.Step(rom, ram);
+
+    ASSERT_EQ(cpu.m_Cycles, 3);
+    ASSERT_EQ(cpu.m_Registers.PC, 0x122);
+    ASSERT_EQ(cpu.m_Registers.ZF, 0);
+
+    ASSERT_EQ(cpu.m_Registers.A, 0);
+    ASSERT_EQ(cpu.m_Registers.BC, 0);
+    ASSERT_EQ(cpu.m_Registers.DE, 0);
+    ASSERT_EQ(cpu.m_Registers.HL, 0);
+    ASSERT_EQ(cpu.m_Registers.SP, 0);
+    ASSERT_EQ(cpu.m_Registers.IR, 0);
+    ASSERT_EQ(cpu.m_Registers.IE, 0);
+    ASSERT_EQ(cpu.m_Registers.NF, 0);
+    ASSERT_EQ(cpu.m_Registers.HF, 0);
+    ASSERT_EQ(cpu.m_Registers.CF, 0);
+}
+
+TEST_F(CPUTests, Test_2_JR_NZ_8)
+{
+    rom.m_RawData[0x100] = cpu.INS_JR_NZ_8;
+    rom.m_RawData[0x101] = 0xA0;
+
+    cpu.Step(rom, ram);
+
+    ASSERT_EQ(cpu.m_Cycles, 3);
+    ASSERT_EQ(cpu.m_Registers.PC, 0xA2);
+    ASSERT_EQ(cpu.m_Registers.ZF, 0);
+
+    ASSERT_EQ(cpu.m_Registers.A, 0);
+    ASSERT_EQ(cpu.m_Registers.BC, 0);
+    ASSERT_EQ(cpu.m_Registers.DE, 0);
+    ASSERT_EQ(cpu.m_Registers.HL, 0);
+    ASSERT_EQ(cpu.m_Registers.SP, 0);
+    ASSERT_EQ(cpu.m_Registers.IR, 0);
+    ASSERT_EQ(cpu.m_Registers.IE, 0);
+    ASSERT_EQ(cpu.m_Registers.NF, 0);
+    ASSERT_EQ(cpu.m_Registers.HF, 0);
+    ASSERT_EQ(cpu.m_Registers.CF, 0);
+}
+
 TEST_F(CPUTests, Test_0_DEC_B)
 {
     rom.m_RawData[0x100] = cpu.INS_DEC_B;
@@ -208,6 +279,9 @@ TEST_F(CPUTests, Test_XOR_A_A)
     ASSERT_EQ(cpu.m_Registers.PC, 0x101);
     ASSERT_EQ(cpu.m_Registers.A, 0);
     ASSERT_EQ(cpu.m_Registers.ZF, 1);
+    ASSERT_EQ(cpu.m_Registers.NF, 0);
+    ASSERT_EQ(cpu.m_Registers.HF, 0);
+    ASSERT_EQ(cpu.m_Registers.CF, 0);
 
     ASSERT_EQ(cpu.m_Registers.BC, 0);
     ASSERT_EQ(cpu.m_Registers.DE, 0);
@@ -215,9 +289,6 @@ TEST_F(CPUTests, Test_XOR_A_A)
     ASSERT_EQ(cpu.m_Registers.SP, 0);
     ASSERT_EQ(cpu.m_Registers.IR, 0);
     ASSERT_EQ(cpu.m_Registers.IE, 0);
-    ASSERT_EQ(cpu.m_Registers.NF, 0);
-    ASSERT_EQ(cpu.m_Registers.HF, 0);
-    ASSERT_EQ(cpu.m_Registers.CF, 0);
 }
 
 TEST_F(CPUTests, Test_0_CP_A_HL)
