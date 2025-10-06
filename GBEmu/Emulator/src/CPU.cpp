@@ -125,7 +125,7 @@ U8 CPU::FetchROMByte(const ROM& rom, U16 address) const
 
 U16 CPU::FetchROMWord(const ROM& rom, U16 address) const
 {
-    U16 data = rom[address];
+    U16 data = rom[address] & 0xff;
     data |= rom[address + 1] << 8;
 
 #if defined(GBE_DEBUG)
@@ -147,7 +147,7 @@ U8 CPU::FetchRAMByte(const RAM& ram, U16 address) const
 }
 U16 CPU::FetchRAMWord(const RAM& ram, U16 address) const
 {
-    U16 data = ram[address];
+    U16 data = ram[address] & 0xff;
     data |= ram[address + 1] << 8;
 
 #if defined(GBE_DEBUG)
