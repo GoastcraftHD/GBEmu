@@ -18,11 +18,75 @@ void CPU::Step(const ROM& rom, RAM& ram)
     const U8 instruction = FetchROMByte(rom, m_Registers.PC);
     m_Registers.PC++;
 
+    if (m_Registers.B == 1)
+    {
+        U8 a = 0;
+    }
+
     switch (instruction)
     {
         case INS_NOP:
             {
                 m_Cycles++;
+                break;
+            }
+        case INS_DEC_B:
+            {
+                DEC_r_8(m_Registers.B);
+                break;
+            }
+        case INS_DEC_C:
+            {
+                DEC_r_8(m_Registers.C);
+                break;
+            }
+        case INS_DEC_D:
+            {
+                DEC_r_8(m_Registers.D);
+                break;
+            }
+        case INS_DEC_E:
+            {
+                DEC_r_8(m_Registers.E);
+                break;
+            }
+        case INS_DEC_H:
+            {
+                DEC_r_8(m_Registers.H);
+                break;
+            }
+        case INS_DEC_L:
+            {
+                DEC_r_8(m_Registers.L);
+                break;
+            }
+        case INS_DEC_HL:
+            {
+                ram[m_Registers.HL]--;
+                m_Registers.ZF = ram[m_Registers.HL] == 0;
+                m_Registers.NF = 1;
+                m_Registers.HF = GET_BIT(ram[m_Registers.HL], 3);
+                m_Cycles += 3;
+                break;
+            }
+        case INS_DEC_A:
+            {
+                DEC_r_8(m_Registers.A);
+                break;
+            }
+        case INS_LD_B_8:
+            {
+                m_Registers.B = FetchROMByte(rom, m_Registers.PC);
+                m_Registers.PC++;
+                m_Cycles += 2;
+                break;
+            }
+
+        case INS_LD_C_8:
+            {
+                m_Registers.C = FetchROMByte(rom, m_Registers.PC);
+                m_Registers.PC++;
+                m_Cycles += 2;
                 break;
             }
         case INS_JR_NZ_8:
@@ -36,29 +100,6 @@ void CPU::Step(const ROM& rom, RAM& ram)
                     m_Cycles++;
                 }
 
-                m_Cycles += 2;
-                break;
-            }
-        case INS_DEC_B:
-            {
-                m_Registers.B--;
-                m_Registers.ZF = m_Registers.B == 0;
-                m_Registers.NF = 1;
-                m_Registers.HF = GET_BIT(m_Registers.B, 3);
-                m_Cycles++;
-                break;
-            }
-        case INS_LD_B_8:
-            {
-                m_Registers.B = FetchROMByte(rom, m_Registers.PC);
-                m_Registers.PC++;
-                m_Cycles += 2;
-                break;
-            }
-        case INS_LD_C_8:
-            {
-                m_Registers.C = FetchROMByte(rom, m_Registers.PC);
-                m_Registers.PC++;
                 m_Cycles += 2;
                 break;
             }
@@ -166,4 +207,12 @@ void CPU::WriteRAMByte(RAM& ram, U16 address, U8 data)
 #endif
 }
 
+void CPU::DEC_r_8(U8& reg)
+{
+    reg--;
+    m_Registers.ZF = reg == 0;
+    m_Registers.NF = 1;
+    m_Registers.HF = GET_BIT(reg, 3);
+    m_Cycles++;
+}
 } // namespace Emulator

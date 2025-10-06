@@ -56,14 +56,21 @@ public:
     enum : U8
     {
         INS_NOP = 0x00,
-        INS_JR_NZ_8 = 0x02,
         INS_DEC_B = 0x05,
+        INS_DEC_C = 0x0D,
+        INS_DEC_D = 0x15,
+        INS_DEC_E = 0x1D,
+        INS_DEC_H = 0x25,
+        INS_DEC_L = 0x2D,
+        INS_DEC_HL = 0x35,
+        INS_DEC_A = 0x3D,
         INS_LD_B_8 = 0x06,
         INS_LD_C_8 = 0x0E,
         INS_LD_HL_16 = 0x21,
         INS_LD_HL_NEG_A = 0x32,
         INS_XOR_A_A = 0xAF,
         INS_CP_A_HL = 0xBE,
+        INS_JR_NZ_8 = 0x20,
         INS_JP_NN = 0xC3,
     };
 
@@ -85,6 +92,8 @@ private:
     U16 FetchRAMWord(const RAM& ram, U16 address) const;
 
     void WriteRAMByte(RAM& ram, U16 address, U8 data);
+
+    void DEC_r_8(U8& reg);
 
 private:
     Registers m_Registers;
