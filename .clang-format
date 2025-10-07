@@ -7,7 +7,7 @@ IndentWidth: 4
 IndentPPDirectives: BeforeHash
 IndentExternBlock: NoIndent
 IndentCaseLabels: true
-IndentCaseBlocks: true
+IndentCaseBlocks: false
 BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true

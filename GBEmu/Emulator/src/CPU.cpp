@@ -35,130 +35,125 @@ void CPU::Step(const ROM& rom, RAM& ram)
     switch (instruction)
     {
         case INS_NOP:
-            {
-                m_Cycles++;
-                break;
-            }
+        {
+            m_Cycles++;
+            break;
+        }
         case INS_DEC_B:
-            {
-                DEC_r_8(m_Registers.B);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.B);
+            break;
+        }
         case INS_DEC_C:
-            {
-                DEC_r_8(m_Registers.C);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.C);
+            break;
+        }
         case INS_DEC_D:
-            {
-                DEC_r_8(m_Registers.D);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.D);
+            break;
+        }
         case INS_DEC_E:
-            {
-                DEC_r_8(m_Registers.E);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.E);
+            break;
+        }
         case INS_DEC_H:
-            {
-                DEC_r_8(m_Registers.H);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.H);
+            break;
+        }
         case INS_DEC_L:
-            {
-                DEC_r_8(m_Registers.L);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.L);
+            break;
+        }
         case INS_DEC_HL:
-            {
-                ram[m_Registers.HL]--;
-                m_Registers.ZF = ram[m_Registers.HL] == 0;
-                m_Registers.NF = 1;
-                m_Registers.HF = GET_BIT(ram[m_Registers.HL], 3);
-                m_Cycles += 3;
-                break;
-            }
+        {
+            ram[m_Registers.HL]--;
+            m_Registers.ZF = ram[m_Registers.HL] == 0;
+            m_Registers.NF = 1;
+            m_Registers.HF = GET_BIT(ram[m_Registers.HL], 3);
+            m_Cycles += 3;
+            break;
+        }
         case INS_DEC_A:
-            {
-                DEC_r_8(m_Registers.A);
-                break;
-            }
+        {
+            DEC_r_8(m_Registers.A);
+            break;
+        }
         case INS_LD_B_8:
-            {
-                m_Registers.B = FetchROMByte(rom, m_Registers.PC);
-                m_Registers.PC++;
-                m_Cycles += 2;
-                break;
-            }
+        {
+            m_Registers.B = FetchROMByte(rom, m_Registers.PC);
+            m_Registers.PC++;
+            m_Cycles += 2;
+            break;
+        }
 
         case INS_LD_C_8:
-            {
-                m_Registers.C = FetchROMByte(rom, m_Registers.PC);
-                m_Registers.PC++;
-                m_Cycles += 2;
-                break;
-            }
+        {
+            m_Registers.C = FetchROMByte(rom, m_Registers.PC);
+            m_Registers.PC++;
+            m_Cycles += 2;
+            break;
+        }
         case INS_JR_NZ_8:
-            {
-                I8 data = static_cast<I8>(FetchROMByte(rom, m_Registers.PC));
-                m_Registers.PC++;
+        {
+            I8 data = static_cast<I8>(FetchROMByte(rom, m_Registers.PC));
+            m_Registers.PC++;
 
-                if (!m_Registers.ZF)
-                {
-                    m_Registers.PC += data;
-                    m_Cycles++;
-                }
-
-                m_Cycles += 2;
-                break;
-            }
-        case INS_LD_HL_16:
+            if (!m_Registers.ZF)
             {
-                m_Registers.HL = FetchROMWord(rom, m_Registers.PC);
-                m_Registers.PC += 2;
-                m_Cycles += 3;
-                break;
-            }
-        case INS_LD_HL_NEG_A:
-            {
-                WriteRAMByte(ram, m_Registers.HL, m_Registers.A);
-                m_Registers.HL--;
-                m_Cycles += 2;
-                break;
-            }
-        case INS_XOR_A_A:
-            {
-                m_Registers.A = 0;
-                m_Registers.ZF = 1;
-                m_Registers.NF = 0;
-                m_Registers.HF = 0;
-                m_Registers.CF = 0;
-
+                m_Registers.PC += data;
                 m_Cycles++;
-                break;
             }
-        case INS_CP_A_HL:
-            {
-                const U8 data = m_Registers.A - FetchRAMByte(ram, m_Registers.HL);
-                m_Registers.ZF = data == 0;
-                m_Registers.NF = 1;
-                m_Registers.HF = GET_BIT(data, 3);
-                m_Registers.CF = GET_BIT(data, 7);
 
-                m_Cycles += 2;
-                break;
-            }
+            m_Cycles += 2;
+            break;
+        }
+        case INS_LD_HL_16:
+        {
+            m_Registers.HL = FetchROMWord(rom, m_Registers.PC);
+            m_Registers.PC += 2;
+            m_Cycles += 3;
+            break;
+        }
+        case INS_LD_HL_NEG_A:
+        {
+            WriteRAMByte(ram, m_Registers.HL, m_Registers.A);
+            m_Registers.HL--;
+            m_Cycles += 2;
+            break;
+        }
+        case INS_XOR_A_A:
+        {
+            m_Registers.A = 0;
+            m_Registers.ZF = 1;
+            m_Registers.NF = 0;
+            m_Registers.HF = 0;
+            m_Registers.CF = 0;
+
+            m_Cycles++;
+            break;
+        }
+        case INS_CP_A_HL:
+        {
+            const U8 data = m_Registers.A - FetchRAMByte(ram, m_Registers.HL);
+            m_Registers.ZF = data == 0;
+            m_Registers.NF = 1;
+            m_Registers.HF = GET_BIT(data, 3);
+            m_Registers.CF = GET_BIT(data, 7);
+
+            m_Cycles += 2;
+            break;
+        }
         case INS_JP_8:
-            {
-                m_Registers.PC = FetchROMWord(rom, m_Registers.PC);
-                m_Cycles += 4;
-                break;
-            }
-        default:
-            {
-                std::printf("0x%02X is currently not implemented\n", instruction);
-                break;
-            }
+        {
+            m_Registers.PC = FetchROMWord(rom, m_Registers.PC);
+            m_Cycles += 4;
+            break;
+        }
     }
 #if defined(GBE_DEBUG)
     if (m_DebugArguments.size() == 1)
