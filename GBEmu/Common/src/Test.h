@@ -21,4 +21,4 @@
     FRIEND_TEST(CPUTests, Test_XOR_A_A);     \
     FRIEND_TEST(CPUTests, Test_0_CP_A_HL);   \
     FRIEND_TEST(CPUTests, Test_1_CP_A_HL);   \
-    FRIEND_TEST(CPUTests, Test_JP_NN);
+    FRIEND_TEST(CPUTests, Test_JP_8);

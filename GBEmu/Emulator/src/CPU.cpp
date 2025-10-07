@@ -1,5 +1,10 @@
 #include "CPU.h"
 
+#include <format>
+#include <iostream>
+#include <print>
+#include <string>
+
 namespace Emulator
 {
 CPU::CPU()
@@ -15,6 +20,10 @@ void CPU::Reset()
 
 void CPU::Step(const ROM& rom, RAM& ram)
 {
+#if defined(GBE_DEBUG)
+    m_DebugArguments.clear();
+#endif
+
     const U8 instruction = FetchROMByte(rom, m_Registers.PC);
     m_Registers.PC++;
 
@@ -139,7 +148,7 @@ void CPU::Step(const ROM& rom, RAM& ram)
                 m_Cycles += 2;
                 break;
             }
-        case INS_JP_NN:
+        case INS_JP_8:
             {
                 m_Registers.PC = FetchROMWord(rom, m_Registers.PC);
                 m_Cycles += 4;
@@ -151,48 +160,58 @@ void CPU::Step(const ROM& rom, RAM& ram)
                 break;
             }
     }
+#if defined(GBE_DEBUG)
+    if (m_DebugArguments.size() == 1)
+    {
+        std::printf("%s\n", ConvertToASM(instruction).c_str());
+    }
+    else
+    {
+        std::printf("%s\n", std::vformat(ConvertToASM(instruction), std::make_format_args(m_DebugArguments[1])).c_str());
+    }
+#endif
 }
 
-U8 CPU::FetchROMByte(const ROM& rom, U16 address) const
+U8 CPU::FetchROMByte(const ROM& rom, U16 address)
 {
     const U8 data = rom[address];
 
 #if defined(GBE_DEBUG)
-    std::printf("Read ROM: 0x%02X\n", data);
+    m_DebugArguments.emplace_back(data);
 #endif
 
     return data;
 }
 
-U16 CPU::FetchROMWord(const ROM& rom, U16 address) const
+U16 CPU::FetchROMWord(const ROM& rom, U16 address)
 {
     U16 data = rom[address] & 0xff;
     data |= rom[address + 1] << 8;
 
 #if defined(GBE_DEBUG)
-    std::printf("Read ROM: 0x%04X from 0x%04X\n", data, address);
+    m_DebugArguments.emplace_back(data);
 #endif
 
     return data;
 }
 
-U8 CPU::FetchRAMByte(const RAM& ram, U16 address) const
+U8 CPU::FetchRAMByte(const RAM& ram, U16 address)
 {
     const U8 data = ram[address];
 
 #if defined(GBE_DEBUG)
-    std::printf("Read ROM: 0x%04X from 0x%04X\n", data, address);
+    m_DebugArguments.emplace_back(data);
 #endif
 
     return data;
 }
-U16 CPU::FetchRAMWord(const RAM& ram, U16 address) const
+U16 CPU::FetchRAMWord(const RAM& ram, U16 address)
 {
     U16 data = ram[address] & 0xff;
     data |= ram[address + 1] << 8;
 
 #if defined(GBE_DEBUG)
-    std::printf("Read RAM: 0x%04X from 0x%04X\n", data, address);
+    m_DebugArguments.emplace_back(data);
 #endif
 
     return data;
@@ -203,8 +222,51 @@ void CPU::WriteRAMByte(RAM& ram, U16 address, U8 data)
     ram[address] = data;
 
 #if defined(GBE_DEBUG)
-    std::printf("Wrote RAM: 0x%04X at 0x%04X\n", data, address);
+    m_DebugArguments.emplace_back(data);
 #endif
+}
+
+const std::string CPU::ConvertToASM(U8 instruction) const
+{
+    switch (instruction)
+    {
+        case INS_NOP:
+            return "NOP";
+        case INS_DEC_B:
+            return "DEC B";
+        case INS_DEC_C:
+            return "DEC C";
+        case INS_DEC_D:
+            return "DEC D";
+        case INS_DEC_E:;
+            return "DEC E";
+        case INS_DEC_H:
+            return "DEC H";
+        case INS_DEC_L:
+            return "DEC L";
+        case INS_DEC_HL:
+            return "DEC [HL]";
+        case INS_DEC_A:
+            return "DEC A";
+        case INS_LD_B_8:
+            return "LD B, {:#x}";
+        case INS_LD_C_8:
+            return "LD C, {:#x}";
+        case INS_LD_HL_16:
+            return "LD HL, {:#x}";
+        case INS_LD_HL_NEG_A:
+            return "LD [HL-], A";
+        case INS_XOR_A_A:
+            return "XOR A, A";
+        case INS_CP_A_HL:
+            return "CP A, [HL]";
+        case INS_JR_NZ_8:
+            return "JR NZ, {:#x}";
+        case INS_JP_8:
+            return "JP {:#x}";
+        default:
+            return std::format("{:#x} is currently not implemented!", instruction);
+    }
 }
 
 void CPU::DEC_r_8(U8& reg)

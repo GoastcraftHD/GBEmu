@@ -347,9 +347,9 @@ TEST_F(CPUTests, Test_1_CP_A_HL)
     ASSERT_EQ(cpu.m_Registers.IE, 0);
 }
 
-TEST_F(CPUTests, Test_JP_NN)
+TEST_F(CPUTests, Test_JP_8)
 {
-    rom.m_RawData[0x100] = cpu.INS_JP_NN;
+    rom.m_RawData[0x100] = cpu.INS_JP_8;
     rom.m_RawData[0x101] = 0x50;
     rom.m_RawData[0x102] = 0x01;
 

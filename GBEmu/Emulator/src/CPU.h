@@ -4,6 +4,8 @@
 #include "ROM.h"
 #include "Types.h"
 
+#include <vector>
+
 namespace Emulator
 {
 struct Registers
@@ -71,7 +73,7 @@ public:
         INS_XOR_A_A = 0xAF,
         INS_CP_A_HL = 0xBE,
         INS_JR_NZ_8 = 0x20,
-        INS_JP_NN = 0xC3,
+        INS_JP_8 = 0xC3,
     };
 
 public:
@@ -85,19 +87,25 @@ public:
     void Step(const ROM& rom, RAM& ram);
 
 private:
-    U8 FetchROMByte(const ROM& rom, U16 address) const;
-    U16 FetchROMWord(const ROM& rom, U16 address) const;
+    U8 FetchROMByte(const ROM& rom, U16 address);
+    U16 FetchROMWord(const ROM& rom, U16 address);
 
-    U8 FetchRAMByte(const RAM& ram, U16 address) const;
-    U16 FetchRAMWord(const RAM& ram, U16 address) const;
+    U8 FetchRAMByte(const RAM& ram, U16 address);
+    U16 FetchRAMWord(const RAM& ram, U16 address);
 
     void WriteRAMByte(RAM& ram, U16 address, U8 data);
+
+    const std::string ConvertToASM(U8 instruction) const;
 
     void DEC_r_8(U8& reg);
 
 private:
     Registers m_Registers;
     U64 m_Cycles = 0;
+
+#if defined(GBE_DEBUG)
+    std::vector<U16> m_DebugArguments;
+#endif
 
     CPU_TESTS
 };
