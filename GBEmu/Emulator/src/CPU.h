@@ -58,6 +58,7 @@ public:
     enum : U8
     {
         INS_NOP = 0x00,
+
         INS_DEC_B = 0x05,
         INS_DEC_C = 0x0D,
         INS_DEC_D = 0x15,
@@ -66,14 +67,34 @@ public:
         INS_DEC_L = 0x2D,
         INS_DEC_HL = 0x35,
         INS_DEC_A = 0x3D,
+
+        INS_INC_B = 0x04,
+        INS_INC_C = 0x0C,
+        INS_INC_D = 0x14,
+        INS_INC_E = 0x1C,
+        INS_INC_H = 0x24,
+        INS_INC_L = 0x2C,
+        INS_INC_HL = 0x34,
+        INS_INC_A = 0x3C,
+
         INS_LD_B_8 = 0x06,
         INS_LD_C_8 = 0x0E,
-        INS_LD_HL_16 = 0x21,
         INS_LD_HL_NEG_A = 0x32,
+        INS_LD_A_HL_POS = 0x2a,
+        INS_LD_BC_16 = 0x01,
+        INS_LD_DE_16 = 0x11,
+        INS_LD_HL_16 = 0x21,
+        INS_LD_SP_16 = 0x31,
+        INS_LDH_C_A = 0xE2,
+
         INS_XOR_A_A = 0xAF,
+
         INS_CP_A_HL = 0xBE,
+
         INS_JR_NZ_8 = 0x20,
         INS_JP_8 = 0xC3,
+
+        INS_CALL_16 = 0xCD
     };
 
 public:
@@ -94,10 +115,13 @@ private:
     U16 FetchRAMWord(const RAM& ram, U16 address);
 
     void WriteRAMByte(RAM& ram, U16 address, U8 data);
+    void WriteRAMWord(RAM& ram, U16 address, U16 data);
 
     const std::string ConvertToASM(U8 instruction) const;
 
     void DEC_r_8(U8& reg);
+    void INC_r_8(U8& reg);
+    void LD_rr_16(const ROM& rom, U16& regg);
 
 private:
     Registers m_Registers;

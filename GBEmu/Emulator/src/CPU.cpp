@@ -16,6 +16,7 @@ void CPU::Reset()
 {
     std::memset(&m_Registers, 0, sizeof(Registers));
     m_Registers.PC = 0x100;
+    m_Registers.SP = 0xFFFE;
 }
 
 void CPU::Step(const ROM& rom, RAM& ram)
@@ -26,11 +27,6 @@ void CPU::Step(const ROM& rom, RAM& ram)
 
     const U8 instruction = FetchROMByte(rom, m_Registers.PC);
     m_Registers.PC++;
-
-    if (m_Registers.B == 1)
-    {
-        U8 a = 0;
-    }
 
     switch (instruction)
     {
@@ -83,6 +79,50 @@ void CPU::Step(const ROM& rom, RAM& ram)
             DEC_r_8(m_Registers.A);
             break;
         }
+        case INS_INC_B:
+        {
+            INC_r_8(m_Registers.B);
+            break;
+        }
+        case INS_INC_C:
+        {
+            INC_r_8(m_Registers.C);
+            break;
+        }
+        case INS_INC_D:
+        {
+            INC_r_8(m_Registers.D);
+            break;
+        }
+        case INS_INC_E:
+        {
+            INC_r_8(m_Registers.E);
+            break;
+        }
+        case INS_INC_H:
+        {
+            INC_r_8(m_Registers.H);
+            break;
+        }
+        case INS_INC_L:
+        {
+            INC_r_8(m_Registers.L);
+            break;
+        }
+        case INS_INC_HL:
+        {
+            ram[m_Registers.HL]++;
+            m_Registers.ZF = ram[m_Registers.HL] == 0;
+            m_Registers.NF = 0;
+            m_Registers.HF = GET_BIT(ram[m_Registers.HL], 3);
+            m_Cycles += 3;
+            break;
+        }
+        case INS_INC_A:
+        {
+            INC_r_8(m_Registers.A);
+            break;
+        }
         case INS_LD_B_8:
         {
             m_Registers.B = FetchROMByte(rom, m_Registers.PC);
@@ -90,7 +130,6 @@ void CPU::Step(const ROM& rom, RAM& ram)
             m_Cycles += 2;
             break;
         }
-
         case INS_LD_C_8:
         {
             m_Registers.C = FetchROMByte(rom, m_Registers.PC);
@@ -112,17 +151,43 @@ void CPU::Step(const ROM& rom, RAM& ram)
             m_Cycles += 2;
             break;
         }
-        case INS_LD_HL_16:
-        {
-            m_Registers.HL = FetchROMWord(rom, m_Registers.PC);
-            m_Registers.PC += 2;
-            m_Cycles += 3;
-            break;
-        }
         case INS_LD_HL_NEG_A:
         {
             WriteRAMByte(ram, m_Registers.HL, m_Registers.A);
             m_Registers.HL--;
+            m_Cycles += 2;
+            break;
+        }
+        case INS_LD_A_HL_POS:
+        {
+            m_Registers.A = FetchRAMByte(ram, m_Registers.HL);
+            m_Registers.HL++;
+            m_Cycles += 2;
+            break;
+        }
+        case INS_LD_BC_16:
+        {
+            LD_rr_16(rom, m_Registers.BC);
+            break;
+        }
+        case INS_LD_DE_16:
+        {
+            LD_rr_16(rom, m_Registers.DE);
+            break;
+        }
+        case INS_LD_HL_16:
+        {
+            LD_rr_16(rom, m_Registers.HL);
+            break;
+        }
+        case INS_LD_SP_16:
+        {
+            LD_rr_16(rom, m_Registers.SP);
+            break;
+        }
+        case INS_LDH_C_A:
+        {
+            WriteRAMByte(ram, 0xFF00 + m_Registers.C, m_Registers.A);
             m_Cycles += 2;
             break;
         }
@@ -152,6 +217,18 @@ void CPU::Step(const ROM& rom, RAM& ram)
         {
             m_Registers.PC = FetchROMWord(rom, m_Registers.PC);
             m_Cycles += 4;
+            break;
+        }
+        case INS_CALL_16:
+        {
+            U16 data = FetchROMWord(rom, m_Registers.PC);
+
+            m_Registers.SP--;
+            WriteRAMWord(ram, m_Registers.SP, m_Registers.PC);
+            m_Registers.SP--;
+
+            m_Registers.PC = data;
+            m_Cycles += 6;
             break;
         }
     }
@@ -221,6 +298,16 @@ void CPU::WriteRAMByte(RAM& ram, U16 address, U8 data)
 #endif
 }
 
+void CPU::WriteRAMWord(RAM& ram, U16 address, U16 data)
+{
+    ram[address] = ~(data | 0x00FF);
+    ram[address - 1] = ~(data | 0xFF00);
+
+#if defined(GBE_DEBUG)
+    m_DebugArguments.emplace_back(data);
+#endif
+}
+
 const std::string CPU::ConvertToASM(U8 instruction) const
 {
     switch (instruction)
@@ -243,14 +330,40 @@ const std::string CPU::ConvertToASM(U8 instruction) const
             return "DEC [HL]";
         case INS_DEC_A:
             return "DEC A";
+        case INS_INC_B:
+            return "INC B";
+        case INS_INC_C:
+            return "INC C";
+        case INS_INC_D:
+            return "INC D";
+        case INS_INC_E:
+            return "INC E";
+        case INS_INC_H:
+            return "INC H";
+        case INS_INC_L:
+            return "INC L";
+        case INS_INC_HL:
+            return "INC [HL]";
+        case INS_INC_A:
+            return "INC A";
         case INS_LD_B_8:
             return "LD B, {:#x}";
         case INS_LD_C_8:
             return "LD C, {:#x}";
-        case INS_LD_HL_16:
-            return "LD HL, {:#x}";
         case INS_LD_HL_NEG_A:
             return "LD [HL-], A";
+        case INS_LD_A_HL_POS:
+            return "LD A, [HL+]";
+        case INS_LD_BC_16:
+            return "LD BC, {:#x}";
+        case INS_LD_DE_16:
+            return "LD DE, {:#x}";
+        case INS_LD_HL_16:
+            return "LD HL, {:#x}";
+        case INS_LD_SP_16:
+            return "LD SP, {:#x}";
+        case INS_LDH_C_A:
+            return "LDH [C], A";
         case INS_XOR_A_A:
             return "XOR A, A";
         case INS_CP_A_HL:
@@ -259,6 +372,8 @@ const std::string CPU::ConvertToASM(U8 instruction) const
             return "JR NZ, {:#x}";
         case INS_JP_8:
             return "JP {:#x}";
+        case INS_CALL_16:
+            return "CALL {:#x}";
         default:
             return std::format("{:#x} is currently not implemented!", instruction);
     }
@@ -271,5 +386,21 @@ void CPU::DEC_r_8(U8& reg)
     m_Registers.NF = 1;
     m_Registers.HF = GET_BIT(reg, 3);
     m_Cycles++;
+}
+
+void CPU::INC_r_8(U8& reg)
+{
+    reg++;
+    m_Registers.ZF = reg == 0;
+    m_Registers.NF = 0;
+    m_Registers.HF = GET_BIT(reg, 3);
+    m_Cycles++;
+}
+
+void CPU::LD_rr_16(const ROM& rom, U16& reg)
+{
+    reg = FetchROMWord(rom, m_Registers.PC);
+    m_Registers.PC += 2;
+    m_Cycles += 3;
 }
 } // namespace Emulator
