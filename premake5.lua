@@ -12,7 +12,12 @@ configurations({
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+group("external")
+include("external")
+group("")
+
 include("GBEmu/Common")
+include("GBEmu/Renderer")
 include("GBEmu/Emulator")
 include("GBEmu/GBEmu")
 include("GBEmu/GBEmuTests")

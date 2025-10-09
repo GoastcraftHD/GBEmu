@@ -1,5 +1,5 @@
-project("GBEmuTests")
-kind("ConsoleApp")
+project("Renderer")
+kind("StaticLib")
 language("C++")
 cppdialect("C++23")
 staticruntime("on")
@@ -15,15 +15,18 @@ files({
 
 includedirs({
 	"src/",
-	"%{wks.location}/GBEmu/Emulator/src",
 	"%{wks.location}/GBEmu/Common/src",
-	"%{wks.location}/external/googletest/googletest/include"
+	"%{wks.location}/external/GLFW/include",
+	"%{wks.location}/external/glad/include",
+	"%{wks.location}/external/imgui"
 })
 
 links({
-	"Emulator",
 	"Common",
-	"googletest"
+	"opengl32.lib",
+    "glad",
+	"GLFW",
+	"imgui"
 })
 
 -- Linux
@@ -51,7 +54,6 @@ buildoptions({
 })
 
 filter({ "system:windows", "configurations:Release" })
-kind("WindowedApp")
 buildoptions({
 	"/WX",
 })

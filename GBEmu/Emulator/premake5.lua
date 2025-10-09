@@ -15,11 +15,13 @@ files({
 
 includedirs({
 	"src/",
-	"%{wks.location}/GBEmu/Common/src"
+	"%{wks.location}/GBEmu/Common/src",
+	"%{wks.location}/GBEmu/Renderer/src"
 })
 
 links({
-	"Common"
+	"Common",
+	"Renderer"
 })
 
 -- Linux
