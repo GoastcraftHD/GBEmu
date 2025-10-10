@@ -26,7 +26,11 @@ links({
 	"opengl32.lib",
     "glad",
 	"GLFW",
-	"imgui"
+	"ImGui"
+})
+
+defines({
+        'IMGUI_USER_CONFIG="../../GBEmu/Renderer/src/ImGuiConfig.h"'
 })
 
 -- Linux
