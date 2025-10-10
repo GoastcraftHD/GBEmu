@@ -151,6 +151,7 @@ project("ImGui")
 	language("C++")
 	cppdialect("C++23")
     staticruntime("on")
+    warnings("off")
     systemversion("latest")
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")

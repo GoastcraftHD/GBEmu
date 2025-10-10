@@ -15,5 +15,10 @@ public:
 
 private:
     UniquePtr<Window> m_Window;
+
+#if defined(GBE_DEBUG)
+    UniquePtr<Window> m_DebugWindow;
+    void RenderDebugWindow();
+#endif
 };
 } // namespace Renderer
