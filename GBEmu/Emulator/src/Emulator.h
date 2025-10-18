@@ -3,8 +3,10 @@
 #include "CPU.h"
 #include "RAM.h"
 #include "ROM.h"
+#include "Renderer.h"
 
 #include <filesystem>
+#include <thread>
 
 namespace Emulator
 {
@@ -16,10 +18,13 @@ public:
     void Run();
 
 private:
-    bool m_ShouldStop = false;
-
     ROM m_ROM;
     RAM m_RAM;
     CPU m_CPU;
+
+    UniquePtr<Renderer::Renderer> m_Renderer;
+
+    std::jthread m_CpuThread;
+    std::jthread m_RenderThread;
 };
 } // namespace Emulator

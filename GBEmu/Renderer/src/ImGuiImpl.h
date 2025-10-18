@@ -6,7 +6,7 @@
 #include <backends/imgui_impl_opengl3.h>
 // clang-format on
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace Renderer::ImGuiImpl
 {

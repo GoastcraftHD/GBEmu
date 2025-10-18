@@ -16,6 +16,7 @@ files({
 includedirs({
 	"src/",
 	"%{wks.location}/GBEmu/Common/src",
+	"%{wks.location}/GBEmu/Emulator/src",
 	"%{wks.location}/external/GLFW/include",
 	"%{wks.location}/external/glad/include",
 	"%{wks.location}/external/imgui"

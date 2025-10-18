@@ -4,6 +4,8 @@
 
 #include <string>
 
+struct GLFWwindow;
+
 namespace Renderer
 {
 class Window
@@ -12,12 +14,12 @@ public:
     Window(std::string name, U32 width, U32 height);
     ~Window();
 
-    void* GetRawWindow() const
+    GLFWwindow* GetRawWindow() const
     {
         return m_Window;
     }
 
 private:
-    void* m_Window;
+    GLFWwindow* m_Window;
 };
 } // namespace Renderer

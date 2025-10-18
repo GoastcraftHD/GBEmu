@@ -17,6 +17,6 @@ Window::Window(std::string name, U32 width, U32 height)
 
 Window::~Window()
 {
-    glfwDestroyWindow(static_cast<GLFWwindow*>(m_Window));
+    glfwDestroyWindow(m_Window);
 }
 } // namespace Renderer

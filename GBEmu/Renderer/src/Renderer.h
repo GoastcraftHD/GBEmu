@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ROM.h"
 #include "Types.h"
 #include "Window.h"
 
@@ -8,17 +9,18 @@ namespace Renderer
 class Renderer
 {
 public:
-    Renderer();
+    Renderer(SharedPtr<Emulator::ROM> rom);
     ~Renderer();
 
     void Run();
 
 private:
-    UniquePtr<Window> m_Window;
-
-#if defined(GBE_DEBUG)
-    UniquePtr<Window> m_DebugWindow;
     void RenderDebugWindow();
-#endif
+
+private:
+    UniquePtr<Window> m_Window;
+    UniquePtr<Window> m_DebugWindow;
+
+    SharedPtr<Emulator::ROM> m_ROM;
 };
 } // namespace Renderer

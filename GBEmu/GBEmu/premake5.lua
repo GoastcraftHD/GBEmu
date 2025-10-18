@@ -16,7 +16,8 @@ files({
 includedirs({
 	"src/",
 	"%{wks.location}/GBEmu/Emulator/src",
-	"%{wks.location}/GBEmu/Common/src"
+	"%{wks.location}/GBEmu/Common/src",
+	"%{wks.location}/GBEmu/Renderer/src"
 })
 
 links({
