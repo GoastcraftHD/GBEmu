@@ -2,6 +2,7 @@
 
 #include "RAM.h"
 #include "ROM.h"
+#include "Test.h"
 #include "Types.h"
 
 #include <vector>
@@ -105,23 +106,20 @@ public:
     /*
       Executes 1 instruction
      */
-    void Step(const ROM& rom, RAM& ram);
+    void Step(RAM& ram);
 
 private:
-    U8 FetchROMByte(const ROM& rom, U16 address);
-    U16 FetchROMWord(const ROM& rom, U16 address);
+    U8 FetchByte(const RAM& ram, U16 address);
+    U16 FetchWord(const RAM& ram, U16 address);
 
-    U8 FetchRAMByte(const RAM& ram, U16 address);
-    U16 FetchRAMWord(const RAM& ram, U16 address);
-
-    void WriteRAMByte(RAM& ram, U16 address, U8 data);
-    void WriteRAMWord(RAM& ram, U16 address, U16 data);
+    void WriteByte(RAM& ram, U16 address, U8 data);
+    void WriteWord(RAM& ram, U16 address, U16 data);
 
     const std::string ConvertToASM(U8 instruction) const;
 
     void DEC_r_8(U8& reg);
     void INC_r_8(U8& reg);
-    void LD_rr_16(const ROM& rom, U16& regg);
+    void LD_rr_16(const RAM& ram, U16& regg);
 
 private:
     Registers m_Registers;

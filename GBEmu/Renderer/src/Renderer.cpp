@@ -13,7 +13,7 @@
 
 namespace Renderer
 {
-Renderer::Renderer(SharedPtr<Emulator::ROM> rom) : m_ROM(rom)
+Renderer::Renderer(SharedPtr<Emulator::RAM> ram) : m_RAM(ram)
 {
     GBE_ASSERT_OR_EXECUTE(glfwInit(), "Failed to initialize glfw!", return);
 
@@ -104,18 +104,18 @@ void Renderer::RenderDebugWindow()
     }
     ImGui::TableSetupScrollFreeze(0, 1);
     ImGui::TableHeadersRow();
-    for (U32 row = 0; row < m_ROM->GetRawData().size() / 0x10; row++)
+    for (U32 row = 0; row < 0xFFF; row++)
     {
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
-        ImGui::Text(std::format("{:#x}", row * 0x10).c_str());
+        ImGui::Text(std::format("{:#x}", row * 0x10).c_str()); // Row number
 
         for (U32 column = 1; column < numColumns; column++)
         {
             ImGui::TableSetColumnIndex(column);
             U32 columnId = row * 0x10 + (column - 1);
-            ImGui::Text(std::format("{:#x}", m_ROM->GetRawData()[columnId]).c_str());
+            ImGui::Text(std::format("{:#x}", m_RAM->GetRawData()[columnId]).c_str());
         }
     }
     ImGui::EndTable();

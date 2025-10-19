@@ -18,10 +18,10 @@ public:
     void Run();
 
 private:
-    ROM m_ROM;
-    RAM m_RAM;
+    ROMHeader m_ROMHeader;
     CPU m_CPU;
 
+    SharedPtr<RAM> m_RAM;
     UniquePtr<Renderer::Renderer> m_Renderer;
 
     std::jthread m_CpuThread;

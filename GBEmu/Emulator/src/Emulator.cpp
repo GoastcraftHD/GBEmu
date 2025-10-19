@@ -9,8 +9,11 @@
 namespace Emulator
 {
 Emulator::Emulator(const std::filesystem::path& romPath)
-    : m_ROM(Common::ReadBinaryFile(romPath.string())), m_Renderer(MakeUnique<Renderer::Renderer>(MakeShared<ROM>(m_ROM)))
 {
+    const std::vector<char> romData = Common::ReadBinaryFile(romPath.string());
+    m_ROMHeader = ROMHeader(romData);
+    m_RAM = MakeShared<RAM>(romData);
+    m_Renderer = MakeUnique<Renderer::Renderer>(m_RAM);
 }
 
 void Emulator::Run()
@@ -20,8 +23,9 @@ void Emulator::Run()
         {
             while (!stopToken.stop_requested())
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                // m_CPU.Step(m_ROM, m_RAM);
+                std::chrono::time_point now = std::chrono::steady_clock::now();
+                m_CPU.Step(*m_RAM.get());
+                std::this_thread::sleep_until(now + std::chrono::seconds(1));
             }
         });
 

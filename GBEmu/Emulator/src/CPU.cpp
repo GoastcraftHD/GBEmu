@@ -19,13 +19,13 @@ void CPU::Reset()
     m_Registers.SP = 0xFFFE;
 }
 
-void CPU::Step(const ROM& rom, RAM& ram)
+void CPU::Step(RAM& ram)
 {
 #if defined(GBE_DEBUG)
     m_DebugArguments.clear();
 #endif
 
-    const U8 instruction = FetchROMByte(rom, m_Registers.PC);
+    const U8 instruction = FetchByte(ram, m_Registers.PC);
     m_Registers.PC++;
 
     switch (instruction)
@@ -125,21 +125,21 @@ void CPU::Step(const ROM& rom, RAM& ram)
         }
         case INS_LD_B_8:
         {
-            m_Registers.B = FetchROMByte(rom, m_Registers.PC);
+            m_Registers.B = FetchByte(ram, m_Registers.PC);
             m_Registers.PC++;
             m_Cycles += 2;
             break;
         }
         case INS_LD_C_8:
         {
-            m_Registers.C = FetchROMByte(rom, m_Registers.PC);
+            m_Registers.C = FetchByte(ram, m_Registers.PC);
             m_Registers.PC++;
             m_Cycles += 2;
             break;
         }
         case INS_JR_NZ_8:
         {
-            I8 data = static_cast<I8>(FetchROMByte(rom, m_Registers.PC));
+            I8 data = static_cast<I8>(FetchByte(ram, m_Registers.PC));
             m_Registers.PC++;
 
             if (!m_Registers.ZF)
@@ -153,41 +153,41 @@ void CPU::Step(const ROM& rom, RAM& ram)
         }
         case INS_LD_HL_NEG_A:
         {
-            WriteRAMByte(ram, m_Registers.HL, m_Registers.A);
+            WriteByte(ram, m_Registers.HL, m_Registers.A);
             m_Registers.HL--;
             m_Cycles += 2;
             break;
         }
         case INS_LD_A_HL_POS:
         {
-            m_Registers.A = FetchRAMByte(ram, m_Registers.HL);
+            m_Registers.A = FetchByte(ram, m_Registers.HL);
             m_Registers.HL++;
             m_Cycles += 2;
             break;
         }
         case INS_LD_BC_16:
         {
-            LD_rr_16(rom, m_Registers.BC);
+            LD_rr_16(ram, m_Registers.BC);
             break;
         }
         case INS_LD_DE_16:
         {
-            LD_rr_16(rom, m_Registers.DE);
+            LD_rr_16(ram, m_Registers.DE);
             break;
         }
         case INS_LD_HL_16:
         {
-            LD_rr_16(rom, m_Registers.HL);
+            LD_rr_16(ram, m_Registers.HL);
             break;
         }
         case INS_LD_SP_16:
         {
-            LD_rr_16(rom, m_Registers.SP);
+            LD_rr_16(ram, m_Registers.SP);
             break;
         }
         case INS_LDH_C_A:
         {
-            WriteRAMByte(ram, 0xFF00 + m_Registers.C, m_Registers.A);
+            WriteByte(ram, 0xFF00 + m_Registers.C, m_Registers.A);
             m_Cycles += 2;
             break;
         }
@@ -204,7 +204,7 @@ void CPU::Step(const ROM& rom, RAM& ram)
         }
         case INS_CP_A_HL:
         {
-            const U8 data = m_Registers.A - FetchRAMByte(ram, m_Registers.HL);
+            const U8 data = m_Registers.A - FetchByte(ram, m_Registers.HL);
             m_Registers.ZF = data == 0;
             m_Registers.NF = 1;
             m_Registers.HF = GET_BIT(data, 3);
@@ -215,16 +215,16 @@ void CPU::Step(const ROM& rom, RAM& ram)
         }
         case INS_JP_8:
         {
-            m_Registers.PC = FetchROMWord(rom, m_Registers.PC);
+            m_Registers.PC = FetchWord(ram, m_Registers.PC);
             m_Cycles += 4;
             break;
         }
         case INS_CALL_16:
         {
-            U16 data = FetchROMWord(rom, m_Registers.PC);
+            U16 data = FetchWord(ram, m_Registers.PC);
 
             m_Registers.SP--;
-            WriteRAMWord(ram, m_Registers.SP, m_Registers.PC);
+            WriteWord(ram, m_Registers.SP, m_Registers.PC);
             m_Registers.SP--;
 
             m_Registers.PC = data;
@@ -244,30 +244,7 @@ void CPU::Step(const ROM& rom, RAM& ram)
 #endif
 }
 
-U8 CPU::FetchROMByte(const ROM& rom, U16 address)
-{
-    const U8 data = rom[address];
-
-#if defined(GBE_DEBUG)
-    m_DebugArguments.emplace_back(data);
-#endif
-
-    return data;
-}
-
-U16 CPU::FetchROMWord(const ROM& rom, U16 address)
-{
-    U16 data = rom[address] & 0xff;
-    data |= rom[address + 1] << 8;
-
-#if defined(GBE_DEBUG)
-    m_DebugArguments.emplace_back(data);
-#endif
-
-    return data;
-}
-
-U8 CPU::FetchRAMByte(const RAM& ram, U16 address)
+U8 CPU::FetchByte(const RAM& ram, U16 address)
 {
     const U8 data = ram[address];
 
@@ -277,7 +254,7 @@ U8 CPU::FetchRAMByte(const RAM& ram, U16 address)
 
     return data;
 }
-U16 CPU::FetchRAMWord(const RAM& ram, U16 address)
+U16 CPU::FetchWord(const RAM& ram, U16 address)
 {
     U16 data = ram[address] & 0xff;
     data |= ram[address + 1] << 8;
@@ -289,7 +266,7 @@ U16 CPU::FetchRAMWord(const RAM& ram, U16 address)
     return data;
 }
 
-void CPU::WriteRAMByte(RAM& ram, U16 address, U8 data)
+void CPU::WriteByte(RAM& ram, U16 address, U8 data)
 {
     ram[address] = data;
 
@@ -298,7 +275,7 @@ void CPU::WriteRAMByte(RAM& ram, U16 address, U8 data)
 #endif
 }
 
-void CPU::WriteRAMWord(RAM& ram, U16 address, U16 data)
+void CPU::WriteWord(RAM& ram, U16 address, U16 data)
 {
     ram[address] = ~(data | 0x00FF);
     ram[address - 1] = ~(data | 0xFF00);
@@ -397,9 +374,9 @@ void CPU::INC_r_8(U8& reg)
     m_Cycles++;
 }
 
-void CPU::LD_rr_16(const ROM& rom, U16& reg)
+void CPU::LD_rr_16(const RAM& ram, U16& reg)
 {
-    reg = FetchROMWord(rom, m_Registers.PC);
+    reg = FetchWord(ram, m_Registers.PC);
     m_Registers.PC += 2;
     m_Cycles += 3;
 }

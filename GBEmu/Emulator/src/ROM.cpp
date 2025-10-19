@@ -4,35 +4,35 @@
 
 namespace Emulator
 {
-ROM::ROM(std::vector<char>&& romData) : m_RawData(std::move(romData))
+ROMHeader::ROMHeader(const std::vector<char>& romData)
 {
-    std::memcpy(&m_Header.EntryPoint, &m_RawData[0x100], 4);
+    std::memcpy(&EntryPoint, &romData[0x100], 4);
 
     UniquePtr<char[]> tempTitle = MakeUnique<char[]>(16);
-    strcpy_s(tempTitle.get(), 16, &m_RawData[0x134]);
-    m_Header.GameTitle = std::string(tempTitle.get());
+    strcpy_s(tempTitle.get(), 16, &romData[0x134]);
+    GameTitle = std::string(tempTitle.get());
 
-    if (m_RawData[0x143] == 0xC0)
+    if (romData[0x143] == 0xC0)
     {
-        m_Header.CGBOnly = true;
+        CGBOnly = true;
     }
 
-    m_Header.CartridgeType = static_cast<CartridgeType>(m_RawData[0x147]);
-    m_Header.ROMSize = 32768 * (1I32 << m_RawData[0x148]);
+    CartridgeType = static_cast<CartridgeTypeEnum>(romData[0x147]);
+    ROMSize = 32768 * (1I32 << romData[0x148]);
 
-    switch (m_RawData[0x149])
+    switch (romData[0x149])
     {
         case 0x2:
-            m_Header.RAMSize = 8192 * 1;
+            RAMSize = 8192 * 1;
             break;
         case 0x3:
-            m_Header.RAMSize = 8192 * 4;
+            RAMSize = 8192 * 4;
             break;
         case 0x4:
-            m_Header.RAMSize = 8192 * 16;
+            RAMSize = 8192 * 16;
             break;
         case 0x5:
-            m_Header.RAMSize = 8192 * 8;
+            RAMSize = 8192 * 8;
             break;
         default:
             break;

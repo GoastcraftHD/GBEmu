@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Test.h"
 #include "Types.h"
 
 #include <array>
@@ -9,14 +8,13 @@
 #include <string>
 #include <vector>
 
-class CPUTests;
-
 namespace Emulator
 {
-class ROM
+// Incomplete implementation, includes only what is absolutly necessary
+struct ROMHeader
 {
 public:
-    enum CartridgeType : U8
+    enum class CartridgeTypeEnum : U8
     {
         ROM_ONLY = 0x00,
         MBC1 = 0x01,
@@ -48,40 +46,16 @@ public:
         HUC1_RAM_BATTERY = 0xFF
     };
 
-    // Incomplete implementation, includes only what is absolutly necessary
-    struct ROMHeader
-    {
-        std::array<U8, 4> EntryPoint{};
-        std::string GameTitle = "";
-        bool CGBOnly = false;
-        CartridgeType CartridgeType = CartridgeType::ROM_ONLY;
-        U32 ROMSize = 32768; // Minimum of 32KiB
-        U32 RAMSize = 0;
-    };
+public:
+    ROMHeader() = default;
+    ROMHeader(const std::vector<char>& romData);
 
 public:
-    ROM() = default;
-    ROM(std::vector<char>&& romData);
-
-    const ROMHeader& GetROMHeader() const
-    {
-        return m_Header;
-    }
-
-    const std::vector<char>& GetRawData() const
-    {
-        return m_RawData;
-    }
-
-    const char operator[](U16 address) const
-    {
-        return m_RawData[address];
-    }
-
-private:
-    ROMHeader m_Header;
-    std::vector<char> m_RawData;
-
-    CPU_TESTS
+    std::array<U8, 4> EntryPoint{};
+    std::string GameTitle = "";
+    bool CGBOnly = false;
+    CartridgeTypeEnum CartridgeType = CartridgeTypeEnum::ROM_ONLY;
+    U32 ROMSize = 32768; // Minimum of 32KiB
+    U32 RAMSize = 0;
 };
 } // namespace Emulator

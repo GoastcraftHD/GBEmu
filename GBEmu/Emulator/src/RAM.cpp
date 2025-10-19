@@ -2,8 +2,8 @@
 
 namespace Emulator
 {
-RAM::RAM()
+RAM::RAM(const std::vector<char>& romData) : m_RawData(std::vector<U8>(0xFFFF))
 {
-    m_RawData = std::vector<U8>(0xFFFF);
+    std::memcpy(m_RawData.data(), romData.data(), romData.size());
 }
 } // namespace Emulator
